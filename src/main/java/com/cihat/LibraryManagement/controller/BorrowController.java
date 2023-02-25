@@ -34,12 +34,11 @@ public class BorrowController {
     }
     @PostMapping("/returnBook")
     public ResponseEntity<?> returnBook(
-            @RequestBody Long bookId,
             @RequestBody Long borrowerId
     )
     {
         try {
-            managementService.returnBook(bookId,borrowerId);
+            managementService.returnBook(borrowerId);
             return ResponseEntity.ok().body("The book was returned.");
         }catch (Exception e){
             return ResponseEntity.badRequest().body("The book could not be returned.");
