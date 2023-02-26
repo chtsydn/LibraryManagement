@@ -22,51 +22,75 @@ public class ManagementService {
     @Autowired
     private BorrowerRepository borrowerRepository;
 
-    public void addBook(String title,String author,String isbn,Integer copies){
-        Book book = Book.getBookInstance();
-        book.setTitle(title);
-        book.setAuthor(author);
-        book.setIsbn(isbn);
-        book.setAvailableCopies(copies);
-        bookRepository.save(book);
+    public String addBook(Book book){
+        String isbn = book.getIsbn();
+        try {
+            Book book2 = getBook(isbn);
+            book2.setAvailableCopies(book.getAvailableCopies()+ book2.getAvailableCopies());
+            bookRepository.save(book2);
+            return "The book has already been added. Copies added.";
+        }catch (Exception e){
+            bookRepository.save(book);
+            return "Book added.";
+        }
     }
     public void removeBook(String isbn){
-        bookRepository.deleteBookByIsbn(isbn);
+        Book book = getBook(isbn);
+        if (book!=null){
+            bookRepository.delete(book);
+        }else {
+            throw new IllegalArgumentException("No books found.");
+        }
     }
     public Book getBook(String isbn){
         Optional<Book> bookOptional = bookRepository.findBookByIsbn(isbn);
         return bookOptional.orElse(null);
     }
 
-    public void addBorrower(String name,String email,String phoneNumber){
-        Borrower borrower = Borrower.getBorrowerInstance();
-        borrower.setName(name);
-        borrower.setEmail(email);
-        borrower.setPhoneNumber(phoneNumber);
-        borrower.setBookIsbn(null);
-        borrowerRepository.save(borrower);
+    public String addBorrower(Borrower borrower){
+        String email = borrower.getEmail();
+        Borrower borrower2 = getBorrower(email);
+        if (borrower2==null){
+            borrowerRepository.save(borrower);
+            return "Borrower added.";
+        }else {
+            throw new IllegalArgumentException("Borrower can not added.");
+        }
     }
     public void removeBorrower(String email){
-        borrowerRepository.deleteBorrowerByEmail(email);
+        Borrower borrower = getBorrower(email);
+        if (borrower!=null){
+            borrowerRepository.delete(borrower);
+        }else {
+            throw new IllegalArgumentException("No borrowers found.");
+        }
     }
     public Borrower getBorrower(String email){
         Optional<Borrower> borrowerOptional = borrowerRepository.findBorrowerByEmail(email);
         return borrowerOptional.orElse(null);
     }
 
-    public void borrowBook(Long bookId,Long borrowerId){
+    public String borrowBook(Long bookId,Long borrowerId){
         Optional<Book> bookOptional = bookRepository.findBookById(bookId);
         Optional<Borrower> borrowerOptional = borrowerRepository.findBorrowerById(borrowerId);
-        if (bookOptional.isPresent() && borrowerOptional.isPresent()){
+        if (bookOptional.isPresent()){
             Book book = bookOptional.get();
-            Borrower borrower = borrowerOptional.get();
-            if (borrower.getBookIsbn() == null && book.getAvailableCopies()>0){
-                borrower.setBookIsbn(book.getIsbn());
-                book.setAvailableCopies(book.getAvailableCopies()-1);
-                borrowerRepository.save(borrower);
-                bookRepository.save(book);
+            if (borrowerOptional.isPresent()){
+                Borrower borrower = borrowerOptional.get();
+                if (borrower.getBookIsbn() == null && book.getAvailableCopies()>0){
+                    borrower.setBookIsbn(book.getIsbn());
+                    book.setAvailableCopies(book.getAvailableCopies()-1);
+                    borrowerRepository.save(borrower);
+                    bookRepository.save(book);
+                    return "The book was borrowed.";
+                }
+            }else {
+                throw new IllegalArgumentException("Borrower not found.");
             }
+        }else {
+            throw new IllegalArgumentException("Book not found.");
         }
+        return "The book could not be borrowed.";
     }
 
     public void returnBook(Long borrowerId){
@@ -75,12 +99,18 @@ public class ManagementService {
         if (borrowerOptional.isPresent()){
             Borrower borrower = borrowerOptional.get();
             isbn = borrower.getBookIsbn();
-        }
-        Optional<Book> bookOptional = isbn==null?Optional.empty():bookRepository.findBookByIsbn(isbn);
-        if (bookOptional.isPresent()){
-            Book book = bookOptional.get();
-            book.setAvailableCopies(book.getAvailableCopies()+1);
-            bookRepository.save(book);
+            Optional<Book> bookOptional = isbn==null?Optional.empty():bookRepository.findBookByIsbn(isbn);
+            if (bookOptional.isPresent()){
+                Book book = bookOptional.get();
+                book.setAvailableCopies(book.getAvailableCopies()+1);
+                borrower.setBookIsbn(null);
+                borrowerRepository.save(borrower);
+                bookRepository.save(book);
+            }else {
+                throw new IllegalArgumentException("Book not found.");
+            }
+        }else {
+            throw new IllegalArgumentException("Borrower not found.");
         }
     }
 }

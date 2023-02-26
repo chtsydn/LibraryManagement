@@ -1,5 +1,6 @@
 package com.cihat.LibraryManagement.controller;
 
+import com.cihat.LibraryManagement.model.entity.Borrower;
 import com.cihat.LibraryManagement.service.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +20,13 @@ public class BorrowerController {
 
     @PostMapping("/addBorrower")
     public ResponseEntity<?> addBorrower(
-            @RequestBody String name,
-            @RequestBody String email,
-            @RequestBody String phoneNumber
-    )
+            @RequestBody Borrower borrower
+            )
     {
         try {
-            managementService.addBorrower(name,email,phoneNumber);
-            return ResponseEntity.ok().body("Borrower added.");
+            return ResponseEntity.ok().body(managementService.addBorrower(borrower));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Borrower can not added.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -41,7 +39,7 @@ public class BorrowerController {
             managementService.removeBorrower(email);
             return ResponseEntity.ok().body("Borrower removed.");
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Borrower can not removed.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

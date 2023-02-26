@@ -1,5 +1,6 @@
 package com.cihat.LibraryManagement.controller;
 
+import com.cihat.LibraryManagement.model.entity.Book;
 import com.cihat.LibraryManagement.service.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +19,13 @@ public class BookController {
 
     @PostMapping("/addBook")
     public ResponseEntity<?> addBook(
-            @RequestBody String title,
-            @RequestBody String author,
-            @RequestBody String isbn,
-            @RequestBody Integer copies
-    )
+            @RequestBody Book book
+            )
     {
         try {
-            managementService.addBook(title,author,isbn,copies);
-            return ResponseEntity.ok().body("Book added.");
+            return ResponseEntity.ok().body(managementService.addBook(book));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Book can not added.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -41,7 +38,7 @@ public class BookController {
             managementService.removeBook(isbn);
             return ResponseEntity.ok().body("Book removed.");
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Book can not removed.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -53,7 +50,7 @@ public class BookController {
         try {
             return ResponseEntity.ok().body(managementService.getBook(isbn));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("Book not found.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

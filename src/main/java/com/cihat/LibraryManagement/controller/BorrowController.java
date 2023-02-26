@@ -3,9 +3,9 @@ package com.cihat.LibraryManagement.controller;
 import com.cihat.LibraryManagement.service.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,29 +19,28 @@ public class BorrowController {
     @Autowired
     private ManagementService managementService;
 
-    @PostMapping("/borrowBook")
+    @GetMapping("/borrowBook")
     public ResponseEntity<?> borrowBook(
-            @RequestBody Long bookId,
-            @RequestBody Long borrowerId
+            @RequestParam("bookId") Long bookId,
+            @RequestParam("borrowerId") Long borrowerId
     )
     {
         try {
-            managementService.borrowBook(bookId,borrowerId);
-            return ResponseEntity.ok().body("The book was loaned.");
+            return ResponseEntity.ok().body(managementService.borrowBook(bookId,borrowerId));
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("The book could not be loaned.");
+            return ResponseEntity.badRequest().body("The book could not be borrowed.");
         }
     }
-    @PostMapping("/returnBook")
+    @GetMapping("/returnBook")
     public ResponseEntity<?> returnBook(
-            @RequestBody Long borrowerId
+            @RequestParam("borrowerId") Long borrowerId
     )
     {
         try {
             managementService.returnBook(borrowerId);
             return ResponseEntity.ok().body("The book was returned.");
         }catch (Exception e){
-            return ResponseEntity.badRequest().body("The book could not be returned.");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
