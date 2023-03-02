@@ -70,9 +70,9 @@ public class ManagementService {
         return borrowerOptional.orElse(null);
     }
 
-    public String borrowBook(Long bookId,Long borrowerId){
-        Optional<Book> bookOptional = bookRepository.findBookById(bookId);
-        Optional<Borrower> borrowerOptional = borrowerRepository.findBorrowerById(borrowerId);
+    public String borrowBook(String bookIsbn,String borrowerEmail){
+        Optional<Book> bookOptional = bookRepository.findBookByIsbn(bookIsbn);
+        Optional<Borrower> borrowerOptional = borrowerRepository.findBorrowerByEmail(borrowerEmail);
         if (bookOptional.isPresent()){
             Book book = bookOptional.get();
             if (borrowerOptional.isPresent()){
@@ -93,8 +93,8 @@ public class ManagementService {
         return "The book could not be borrowed.";
     }
 
-    public void returnBook(Long borrowerId){
-        Optional<Borrower> borrowerOptional = borrowerRepository.findBorrowerById(borrowerId);
+    public void returnBook(String borrowerEmail){
+        Optional<Borrower> borrowerOptional = borrowerRepository.findBorrowerByEmail(borrowerEmail);
         String isbn = null;
         if (borrowerOptional.isPresent()){
             Borrower borrower = borrowerOptional.get();

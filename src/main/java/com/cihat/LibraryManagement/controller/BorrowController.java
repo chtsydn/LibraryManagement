@@ -3,10 +3,7 @@ package com.cihat.LibraryManagement.controller;
 import com.cihat.LibraryManagement.service.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created with IntelliJ IDEA at 24.02.2023
@@ -15,29 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/borrow")
+@CrossOrigin("*")
 public class BorrowController {
     @Autowired
     private ManagementService managementService;
 
     @GetMapping("/borrowBook")
     public ResponseEntity<?> borrowBook(
-            @RequestParam("bookId") Long bookId,
-            @RequestParam("borrowerId") Long borrowerId
+            @RequestParam("bookIsbn") String bookIsbn,
+            @RequestParam("borrowerEmail") String borrowerEmail
     )
     {
         try {
-            return ResponseEntity.ok().body(managementService.borrowBook(bookId,borrowerId));
+            return ResponseEntity.ok().body(managementService.borrowBook(bookIsbn,borrowerEmail));
         }catch (Exception e){
             return ResponseEntity.badRequest().body("The book could not be borrowed.");
         }
     }
     @GetMapping("/returnBook")
     public ResponseEntity<?> returnBook(
-            @RequestParam("borrowerId") Long borrowerId
+            @RequestParam("borrowerEmail") String borrowerEmail
     )
     {
         try {
-            managementService.returnBook(borrowerId);
+            managementService.returnBook(borrowerEmail);
             return ResponseEntity.ok().body("The book was returned.");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());

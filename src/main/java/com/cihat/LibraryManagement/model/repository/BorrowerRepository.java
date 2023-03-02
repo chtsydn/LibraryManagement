@@ -12,8 +12,5 @@ import java.util.Optional;
  */
 public interface BorrowerRepository extends JpaRepository<Borrower,Long> {
 
-    Optional<Borrower> findBorrowerById(Long id);
-
     Optional<Borrower> findBorrowerByEmail(String email);
-    void deleteBorrowerByEmail(String email);
 }

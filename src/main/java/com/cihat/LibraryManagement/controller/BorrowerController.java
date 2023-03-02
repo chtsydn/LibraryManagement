@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/borrower")
+@CrossOrigin("*")
 public class BorrowerController {
 
     @Autowired

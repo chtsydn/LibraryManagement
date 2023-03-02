@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/book")
+@CrossOrigin("*")
 public class BookController {
     @Autowired
     private ManagementService managementService;
