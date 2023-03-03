@@ -99,17 +99,25 @@ What should be installed on your computer before running the project.
 The project consists of a book class containing the book processes, a user class containing user processes, and a borrowing class containing borrowing processes.
 
 Book Class:
+
 1- Adding books
+
 2- Removing books
+
 3- View books
 
 Borrower Class:
+
 1- Adding borrower
+
 2- Removing borrower
+
 3- View borrower
 
 Borrow Class:
+
 1- Lend the book
+
 2- Take back the borrowed book
 
 
